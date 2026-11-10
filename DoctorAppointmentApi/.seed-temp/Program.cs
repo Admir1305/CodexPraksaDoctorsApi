@@ -1,0 +1,4 @@
+﻿using FirebirdSql.Data.FirebirdClient;
+var cs="DataSource=127.0.0.1;Database=C:\\Users\\Admir\\source\\Databases\\BAZACODEX.FDB;User=SYSDBA;Password=Root;Port=3050;Charset=UTF8;WireCrypt=Enabled;";
+using var c=new FbConnection(cs);await c.OpenAsync();
+using var cmd=c.CreateCommand();cmd.CommandText="SELECT TRIM(rf.RDB$RELATION_NAME),TRIM(rf.RDB$FIELD_NAME),TRIM(rf.RDB$FIELD_SOURCE),f.RDB$FIELD_TYPE,f.RDB$FIELD_SUB_TYPE,rf.RDB$IDENTITY_TYPE FROM RDB$RELATION_FIELDS rf JOIN RDB$FIELDS f ON f.RDB$FIELD_NAME=rf.RDB$FIELD_SOURCE WHERE rf.RDB$RELATION_NAME IN ('DOCTORS','PATIENTS','APPOINTMENTS','SPECIALTIES','STATUSES') ORDER BY 1,rf.RDB$FIELD_POSITION";using var r=await cmd.ExecuteReaderAsync();while(await r.ReadAsync())Console.WriteLine(string.Join(" | ",Enumerable.Range(0,r.FieldCount).Select(i=>r.IsDBNull(i)?"NULL":r.GetValue(i).ToString())));
